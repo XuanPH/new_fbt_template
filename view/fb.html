@@ -96,11 +96,12 @@
                                                 <span id="url-addon" class="input-group-addon">
                                             <span aria-hidden="true" class="glyphicon glyphicon-filter"></span>
                                                 </span>
-                                                <input class="form-control" ng-model="filters.name" placeholder="Tên">
+                                                <input class="form-control" ng-model="filterText" ng-change='filterItems()' placeholder="Tên">
                                             </div>
                                         </div>
                                         <div class="form-group" ng-hide="true">
-                                            <input id="sort" type="" class="form-control" ng-model="filters.is_no_Actions" placeholder="Tên">
+                                            <input id="sort" type="" class="form-control" placeholder="Tên">
+                                            <button class="btn blue" ng-click="filterItems()">tìm</button>
                                             <div class="md-checkbox">
                                                 <input value="0" type="checkbox" id="checkbox3" class="md-check">
                                                 <label for="checkbox3">
@@ -139,7 +140,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr dir-paginate="friend in friends_final | itemsPerPage: 5 | filter: filters| orderBy: '-total_reactions'">
+                                            <tr ng-repeat="friend in displayItems | limitTo: itemsDisplay:page-1 | orderBy: '-total_reactions'">
+                                                <!--  | orderBy: '-total_reactions' -->
                                                 <td>
                                                     <a target="_blank" href="https://fb.com/{{friend.id}}">{{friend.id}}</a>
                                                 </td>
@@ -188,22 +190,22 @@
                                                             </td>
                                                         </tr>
                                                     </table>
-                                                    <!-- <img style=" width: 100%;height: 30%" src="./reactions.jpg">
-                                                    <span ng-click="listPost(friend.id,'LIKE')" class="label label-danger" style="position: absolute;margin-left: 1.5%;margin-top: -2%;cursor: pointer">{{friend.like}}</span>
-                                                    <span ng-click="listPost(friend.id,'LOVE')" class="label label-danger" style="position: absolute;margin-left: 4.5%;margin-top: -2%;cursor: pointer">{{friend.love}}</span>
-                                                    <span ng-click="listPost(friend.id,'HAHA')" class="label label-danger" style="position: absolute;margin-left: 7.5%;margin-top: -2%;cursor: pointer">{{friend.haha}}</span>
-                                                    <span ng-click="listPost(friend.id,'ANGRY')" class="label label-danger" style="position: absolute;margin-left: 19.5%;margin-top: -2%;cursor: pointer">{{friend.angry}}</span>
-                                                    <span ng-click="listPost(friend.id,'WOW')" class="label label-danger" style="position: absolute;margin-left: 13.5%;margin-top: -2%;cursor: pointer">{{friend.wow}}</span>
-                                                    <span ng-click="listPost(friend.id,'SAD')" class="label label-danger" style="position: absolute;margin-left: 16.5%;margin-top: -2%;cursor: pointer">{{friend.sad}}</span>
-                                                    <span ng-click="listPost(friend.id,'THANKFUL,PRIDE')" class="label label-danger" style="position: absolute;margin-left: 10.5%;margin-top: -2%;cursor: pointer">{{friend.thankful + friend.pride}}</span> -->
                                                 </td>
                                                 <td>
                                                     {{friend.total_reactions}}
                                                 </td>
                                             </tr>
                                         </tbody>
-                                        <dir-pagination-controls max-size="10">
-                                        </dir-pagination-controls>
+                                        <uib-pagination class="pagination-sm pagination" total-items="pageCount" ng-model="page" ng-change="pageChanged()" previous-text="&lsaquo;"
+                                            next-text="&rsaquo;" items-per-page=3></uib-pagination>
+                                        <div class="btn-group btn-group-circle">
+                                            
+                                            <button type="button" class="btn btn-default" ng-click="prePage(1)">Đầu</button>
+                                            <button type="button" class="btn btn-default" ng-click="prePage(0)">Lùi</button>
+                                            <button ng-class="{'blue' : page === i}" type="button" class="btn btn-default" ng-click="pageChanged(i)" ng-repeat="i in pageCountNum">{{i > 10 ? i : '0' + i}}</button>
+                                            <button type="button" class="btn btn-default" ng-click="nextPage(0)">Tới</button>                   
+                                            <button type="button" class="btn btn-default" ng-click="nextPage(1)">Cuối</button>
+                                        </div>
                                     </table>
                                 </div>
                             </div>

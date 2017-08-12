@@ -1,5 +1,5 @@
 
-var myApp = angular.module('myApp', ['ngRoute', 'angularSoundManager','angularUtils.directives.dirPagination']);
+var myApp = angular.module('myApp', ['ngRoute', 'angularSoundManager']);
 myApp.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: 'view/fb.html',
@@ -53,6 +53,7 @@ myApp.controller('fbController', ['$scope', '$filter', '$http', '$sce', function
     $scope.showinfo = false;
     $scope.info_user = {};
     $scope.loadingCss = false;
+    $scope.pageCount = 0;
     $scope.onShow = function () {
         $scope.loadingCss = true;
         if ($scope.friends.length <= 0) {
@@ -125,6 +126,9 @@ myApp.controller('fbController', ['$scope', '$filter', '$http', '$sce', function
             $scope.showinfo = true;
             $scope.loadingCss = false;
             $scope.infomation();
+            $scope.friends_final = $scope.friends_final.sort(dynamicSort("-total_reactions"));
+            $scope.pageCount = $scope.friends_final.length;
+            setDisplayItems($scope.friends_final);
         }, function error(res) {
             $scope.loadingCss = false;
         });
@@ -194,6 +198,47 @@ myApp.controller('fbController', ['$scope', '$filter', '$http', '$sce', function
         }, function error(response) {
 
         });
+    }
+
+    $scope.page = 1;
+    $scope.itemsDisplay = 10;
+    $scope.pageCountNum = [];
+    $scope.filterItems = function () {
+        var data = $filter('filter')($scope.friends_final, $scope.filterText, false, 'name');
+        setDisplayItems(data);
+        $scope.page = 1;
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
+    }
+    $scope.pageChanged = function (page) {
+        $scope.page = page;
+        var startPos = (page - 1) * $scope.itemsDisplay;
+        $scope.displayItems = $scope.friends_final.slice(startPos, startPos + $scope.itemsDisplay);
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, $scope.friends_final.length);
+        $scope.pageCountNum = Setting($scope.pageCountNum, page);
+    };
+    $scope.prePage = function (type) {
+        if (type == 0) {
+            $scope.page = ($scope.page - 1 <= 0 ? 1 : $scope.page - 1);
+
+        } else {
+            $scope.page = 1;
+        }
+        $scope.pageChanged($scope.page);
+    }
+    $scope.nextPage = function (type) {
+        var d = CalcPageCount($scope.itemsDisplay, $scope.friends_final.length).length;
+        if (type == 0) {
+            $scope.page = ($scope.page + 1 > d ? $scope.page : $scope.page + 1);
+        } else {
+            $scope.page = d;
+        }
+        $scope.pageChanged($scope.page);
+    }
+    function setDisplayItems(data) {
+        $scope.displayItems = data;
+        $scope.pageCount = data.length;
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
+        $scope.pageCountNum = Setting($scope.pageCountNum, $scope.page);
     }
 }]);
 myApp.controller('youtubeController', ['$scope', '$http', '$sce', '$log', '$routeParams', function ($scope, $http, $sce, $log, $routeParams) {
@@ -452,7 +497,7 @@ myApp.controller('musicController', ['$scope', '$sce', '$http', function ($scope
             method: 'GET',
             url: api_utb_2_mp3.replace(/{url}/g, $scope.urlzing)
         };
-        console.log(api_utb_2_mp3.replace(/{url}/g, $scope.urlzing));
+        //console.log(api_utb_2_mp3.replace(/{url}/g, $scope.urlzing));
         $http(req).then(function success(res) {
             var element = res.data;
             var obj = {
@@ -524,7 +569,7 @@ myApp.controller('musicController', ['$scope', '$sce', '$http', function ($scope
                 };
                 $scope.song_search.push(obj);
             }, this);
-            console.log($scope.song_search);
+            //console.log($scope.song_search);
             $scope.isLoadingSearch = false;
         }, function error(res) {
         }).catch(function (e) {
@@ -599,7 +644,7 @@ myApp.controller('authController', ['$scope', '$location', function ($scope, $lo
     //         });
     // });
     firebase.auth().onAuthStateChanged(firebaseUser => {
-        console.log(firebaseUser);
+        //console.log(firebaseUser);
         if (firebaseUser) {
             $scope.$apply(function () {
                 $scope.logedUser = firebaseUser.email.toString();
@@ -607,7 +652,7 @@ myApp.controller('authController', ['$scope', '$location', function ($scope, $lo
                 const dbRefObject = firebase.database().ref('/user/' + firebaseUser.uid);
                 const dbMesg = dbRefObject.child('message');
                 dbMesg.on('child_added', snap => {
-                    console.log(snap.val());
+                    //console.log(snap.val());
                     if (snap.val().isRead != 1) {
                         let msg = "<b><span style='background-color:red;font-weight:bold;' class='badge'>Thông báo từ Admin</span>"
                             + "</b> <span class'badge'>" + snap.val().content + "</span>";
@@ -656,7 +701,7 @@ myApp.controller('authController', ['$scope', '$location', function ($scope, $lo
                     if (snap.val().level == 'sAdmin') {
                         var dbref = firebase.database().ref('user');
                         dbref.on('value', snap => {
-                            console.log('doc');
+                            //console.log('doc');
                             if ($scope.listUser.length == 0) {
                                 $scope.$apply(function () {
                                     Object.keys(snap.val()).forEach(key => {
@@ -809,7 +854,6 @@ myApp.controller('menuLeftController', ['$scope', '$location', '$rootScope', fun
         $scope.menu_musiz = musiz;
     }
 }]);
-
 myApp.controller('cmtController', ['$scope', '$filter', '$http', '$sce', function ($scope, $filter, $http, $sce) {
     $scope.author = author();
     $scope.loadingCss = false;
@@ -818,10 +862,10 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', '$sce', functio
         if (type == 'friend') {
             $scope.server.id = 'friend';
             $scope.server.name = 'Từ wall bạn bè';
-        }if (type == 'fanpage') {
+        } if (type == 'fanpage') {
             $scope.server.id = 'fanpage';
             $scope.server.name = 'Từ wall Fan Page';
-        }if (type == 'fanpage_admin') {
+        } if (type == 'fanpage_admin') {
             $scope.server.id = 'fanpage_admin';
             $scope.server.name = 'Từ wall Fan Page bạn quản lý';
         }
@@ -831,4 +875,73 @@ function removeByValue(array, value) {
     return array.filter(function (elem, _index) {
         return value != elem.id ? true : false;
     });
+}
+function dynamicSortMultiple() {
+    /*
+     * save the arguments object as it will be overwritten
+     * note that arguments object is an array-like object
+     * consisting of the names of the properties to sort by
+     */
+    var props = arguments;
+    return function (obj1, obj2) {
+        var i = 0, result = 0, numberOfProperties = props.length;
+        /* try getting a different result from 0 (equal)
+         * as long as we have extra properties to compare
+         */
+        while (result === 0 && i < numberOfProperties) {
+            result = dynamicSort(props[i])(obj1, obj2);
+            i++;
+        }
+        return result;
+    }
+}
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if (property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a, b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}
+function CalcPageCount(itemPerPage, Items) {
+    var a = [];
+    var i = parseFloat(Items) / parseFloat(itemPerPage), i2 = parseInt(i),
+        num = (i <= i2 ? i2 : i2 + 1);
+    for (var j = 1; j <= num; j++) {
+        a.push(j);
+    }
+    return a;
+}
+var Setting = function (arrayCount, currentPage) {
+    debugger;
+    var p = [];
+    if (arrayCount.length > 7) {
+        if (currentPage == 1) {
+            p.push(currentPage);
+            p.push(currentPage + 1);
+            p.push(currentPage + 2);
+        }
+        if (currentPage > 1) {
+            p.push(currentPage);
+            p.push(currentPage - 1);
+            if (currentPage + 1 <= arrayCount.length)
+                p.push(currentPage + 1);
+        }
+        if (currentPage + 3 < arrayCount.length) {
+            for (var i = arrayCount.length; i > arrayCount.length - 3; i--) {
+                p.push(i);
+            }
+        }  
+        if (currentPage + 3 >= arrayCount.length) {
+            p.push(1);
+            p.push(2);
+            p.push(3);
+        }
+    }
+    p = p.sort(function (a, b) { return a - b });
+    console.log(p);
+    return p;
 }
