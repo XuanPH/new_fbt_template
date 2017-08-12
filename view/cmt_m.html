@@ -1,0 +1,142 @@
+<div class="page-content" ng-controller="cmtController">
+    <!-- BEGIN PAGE HEAD-->
+    <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+            <h1>Youtube tools
+                <small>Getlink download</small>
+            </h1>
+        </div>
+        <!-- END PAGE TOOLBAR -->
+    </div>
+    <!-- END PAGE HEAD-->
+    <!-- BEGIN PAGE BREADCRUMB -->
+    <ul class="page-breadcrumb breadcrumb">
+        <li>
+            <a href="index.html">Home</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <span class="active">Youtube tools</span>
+        </li>
+    </ul>
+    <!-- END PAGE BREADCRUMB -->
+    <!-- BEGIN PAGE BASE CONTENT -->
+
+    <div class="row">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-facebook-official font-red-sunglo"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">Cấu hình</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+
+                    <div class="search-page search-content-2">
+                        <div class="search-bar bordered">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <!-- <div class="input-group">
+                            <input ng-model="keyword" ng-keydown="$event.keyCode === 13 && search()" type="text" class="form-control" placeholder="Từ khoá...">
+                            <span class="input-group-btn">
+                                            <button ng-click="search()" class="btn blue uppercase bold" type="button">Search</button>
+                                        </span>
+
+                        </div> -->
+                                    <div class="input-group">
+                                        <div class="input-group-btn btn-group btn-group-circle btn-group-solid">
+                                            <button type="button" class="btn blue dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i>  {{server.name}}
+                                                            <i class="fa fa-angle-down"></i>
+                                                        </button>
+                                            <ul class="dropdown-menu pull-right">
+
+                                                <li>
+                                                    <a ng-click="changerServer('friend')"> Từ Wall bạn bè </a>
+                                                </li>
+                                                <li>
+                                                    <a ng-click="changerServer('fanpaga')"> Từ wall Fan Page </a>
+                                                </li>
+                                                <li>
+                                                    <a ng-click="changerServer('fanpage_admin')"> Từ wall Fan Page bạn quản lý </a>
+                                                </li>
+                                                <li class="divider"> </li>
+                                                <li>
+                                                    <a href="javascript:;"> Design by Xuân Phạm </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <input placeholder="Access token" ng-model="keyword" ng-keydown="$event.keyCode === 13 && search()" type="text" class="form-control">
+                                        <div class="input-group-btn btn-group btn-group-circle btn-group-solid">
+                                            <button ng-click="search()" type="button" class="btn green dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                Gửi
+                                                        </button>
+
+                                        </div>
+                                        <!-- /btn-group -->
+                                        <!-- /btn-group -->
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+                    <div class="portlet box blue">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="fa fa-gift"></i>Below Pills </div>
+                            <div class="tools">
+                                <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                            </div>
+                        </div>
+                        <div class="portlet-body tabs-below">
+                            <div class="row">
+                                <div ng-show="server.id == 'friend' ? true : false">
+                                    <div class="col-md-12">
+                                        <div class="col-md-5">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-show="server.id == 'fanpage' ? true : false">
+
+                                </div>
+                                <div ng-show="server.id == 'fanpage_admin' ? true : false">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </br>
+            </div>
+        </div>
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-facebook-official font-red-sunglo"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">Timeline</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+
+                <div class="row">
+                </div>
+                </br>
+            </div>
+        </div>
+    </div>
+    <div class="xp-k" ng-show="loadingCss">
+        <div class="sk-wave">
+            <div class="sk-rect sk-rect1"></div>
+            <div class="sk-rect sk-rect2"></div>
+            <div class="sk-rect sk-rect3"></div>
+            <div class="sk-rect sk-rect4"></div>
+            <div class="sk-rect sk-rect5"></div>
+        </div>
+    </div>
+    <!-- END PAGE BASE CONTENT -->
+</div>

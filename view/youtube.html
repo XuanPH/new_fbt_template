@@ -1,0 +1,103 @@
+<div class="page-content" ng-controller="youtubeController">
+    <!-- BEGIN PAGE HEAD-->
+    <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+            <h1>Youtube tools
+                <small>Getlink download</small>
+            </h1>
+        </div>
+        <!-- END PAGE TOOLBAR -->
+    </div>
+    <!-- END PAGE HEAD-->
+    <!-- BEGIN PAGE BREADCRUMB -->
+    <ul class="page-breadcrumb breadcrumb">
+        <li>
+            <a href="index.html">Home</a>
+            <i class="fa fa-circle"></i>
+        </li>
+        <li>
+            <span class="active">Youtube tools</span>
+        </li>
+    </ul>
+    <!-- END PAGE BREADCRUMB -->
+    <!-- BEGIN PAGE BASE CONTENT -->
+    <div class="row">
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-facebook-official font-red-sunglo"></i>
+                    <span class="caption-subject font-red-sunglo bold uppercase">Youtube tools</span>
+                </div>
+                <div class="actions">
+                    <a class="btn btn-circle btn-icon-only btn-default" href="javascript:;">
+                                            <i class="icon-cloud-upload"></i>
+                                        </a>
+                    <a class="btn btn-circle btn-icon-only btn-default" href="javascript:;">
+                                            <i class="icon-wrench"></i>
+                                        </a>
+                    <a class="btn btn-circle btn-icon-only btn-default" href="javascript:;">
+                                            <i class="icon-trash"></i>
+                                        </a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-link"></i> Link youtube</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                                        <i class="fa fa-link"></i>
+                                                    </span>
+                                    <input type="text" class="form-control" ng-model="link" placeholder="Link youtube"> </div><br>
+                                <a href="javascript:;" ng-click="onGet()" class="btn blue"><i class="fa fa-youtube-play"></i> Getlink </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-user"></i> Thông tin</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="alert alert-success">
+                                    <strong>Nhập link youtube ở kế bên nha!</strong> </div>
+                                <div ng-show="success">
+                                    <button type="button" class="btn btn-primary" ng-click="openNewtab(listDownload[0])" ng-class="{'disabled': !success}">
+                               <i class="fa fa-download"></i>
+                                HD</button>
+                                    <button type="button" class="btn btn-primary" ng-click="openNewtab(listDownload[1])" ng-class="{'disabled': !success}">
+                                <i class="fa fa-download"></i>
+                                        Medium </button>
+                                    <button type="button" class="btn btn-primary" ng-click="openNewtab(listDownload[2])" ng-class="{'disabled': !success}">
+                                <i class="fa fa-download"></i>
+                                        Medium </button>
+                                    <button type="button" class="btn btn-primary" ng-click="openNewtab(listDownload[3])" ng-class="{'disabled': !success}">
+                                <i class="fa fa-download"></i>
+                                        Low </button>
+                                    <button type="button" class="btn btn-primary" ng-click="openNewtab(listDownload[4])" ng-class="{'disabled': !success}">
+                                <i class="fa fa-download"></i>
+                                        Low </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="xp-k" ng-show="loadingCss">
+        <div class="sk-wave">
+            <div class="sk-rect sk-rect1"></div>
+            <div class="sk-rect sk-rect2"></div>
+            <div class="sk-rect sk-rect3"></div>
+            <div class="sk-rect sk-rect4"></div>
+            <div class="sk-rect sk-rect5"></div>
+        </div>
+    </div>
+    <!-- END PAGE BASE CONTENT -->
+</div>

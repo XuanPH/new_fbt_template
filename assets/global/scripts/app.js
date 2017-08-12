@@ -107,7 +107,6 @@ var App = function() {
 
             portlet.remove();
         });
-
         // handle portlet fullscreen
         $('body').on('click', '.portlet > .portlet-title .fullscreen', function(e) {
             e.preventDefault();
