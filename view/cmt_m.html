@@ -56,7 +56,7 @@
                                                     <a ng-click="changerServer('friend')"> Từ Wall bạn bè </a>
                                                 </li>
                                                 <li>
-                                                    <a ng-click="changerServer('fanpaga')"> Từ wall Fan Page </a>
+                                                    <a ng-click="changerServer('fanpage')"> Từ wall Fan Page </a>
                                                 </li>
                                                 <li>
                                                     <a ng-click="changerServer('fanpage_admin')"> Từ wall Fan Page bạn quản lý </a>
@@ -68,7 +68,8 @@
                                             </ul>
                                         </div>
 
-                                        <input placeholder="Access token" ng-model="access_token" ng-keydown="$event.keyCode === 13 && search()" type="text" class="form-control">
+                                        <input ng-paste="copyPasted($event)" placeholder="Access token" ng-model="access_token" ng-keydown="$event.keyCode === 13 && getAllFriend()"
+                                            type="text" class="form-control">
                                         <div class="input-group-btn btn-group btn-group-circle btn-group-solid">
                                             <button ng-click="getAllFriend()" type="button" class="btn green dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                 Gửi
@@ -88,28 +89,34 @@
                     <div class="portlet box blue">
                         <div class="portlet-title">
                             <div class="caption">
-                                <i class="fa fa-gift"></i>Below Pills </div>
-                            <div class="tools">
-                                <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                                <div class="input-group" style="width: 40%;float:left;">
+                                    <span id="url-addon" class="input-group-addon">
+                                            <span aria-hidden="true" class="glyphicon glyphicon-filter"></span>
+                                    </span>
+                                    <input ng-paste="copyPasted_url()" class="form-control ng-pristine ng-valid" ng-model="filterText" ng-change="filterItems()"
+                                        placeholder="{{planholder}}">
+                                </div>
                             </div>
                         </div>
                         <div class="portlet-body tabs-below">
                             <div class="row">
-                                <div ng-show="server.id == 'friend' ? true : false">
+                                <div>
                                     <div class="col-md-12">
-                                        <div class="col-md-5">
+                                        <div class="col-md-6">
                                             <table class="table table-bordered">
                                                 <thead>
                                                     <tr>
                                                         <td>
                                                             ID
                                                         </td>
-                                                        <td style="width: 25%;">
+                                                        <td style="width: 50%;">
                                                             Tên
                                                         </td>
                                                         <td>
-                                                            <a href="javascript:;" class="btn btn-sm btn-circle red easy-pie-chart-reload">
-                                            <i class="fa fa-repeat"></i> Chọn </a>
+                                                            Hình
+                                                        </td>
+                                                        <td>
+                                                            Tác vụ
                                                         </td>
                                                     </tr>
                                                 </thead>
@@ -123,34 +130,69 @@
                                                             <a target="_blank" href="https://fb.com/{{friend.uid}}">{{friend.name}}</a>
                                                         </td>
                                                         <td>
-                                                            <img src="{{friend.picture}}" width="50" height="50">
+                                                            <img style="width: 35px;height: 35px;" alt="" class="img-circle" src="{{friend.pic}}">
                                                         </td>
                                                         <td>
-                                                        </td>
-                                                        <td>
-                                                            {{friend.total_reactions}}
+                                                            <a ng-click="onShow(this)" href="javascript:;" class="btn btn-sm btn-circle red easy-pie-chart-reload">
+                                                            <i class="fa fa-repeat"></i> Chọn </a>
                                                         </td>
                                                     </tr>
                                                 </tbody>
-                                                <uib-pagination class="pagination-sm pagination" total-items="pageCount" ng-model="page" ng-change="pageChanged()" previous-text="&lsaquo;"
-                                                    next-text="&rsaquo;" items-per-page=3></uib-pagination>
-                                                <div class="btn-group btn-group-circle">
-
-                                                    <button type="button" class="btn btn-default" ng-click="prePage(1)">Đầu</button>
-                                                    <button type="button" class="btn btn-default" ng-click="prePage(0)">Lùi</button>
-                                                    <button ng-class="{'blue' : page === i}" type="button" class="btn btn-default" ng-click="pageChanged(i)" ng-repeat="i in pageCountNum">{{i > 10 ? i : '0' + i}}</button>
-                                                    <button type="button" class="btn btn-default" ng-click="nextPage(0)">Tới</button>
-                                                    <button type="button" class="btn btn-default" ng-click="nextPage(1)">Cuối</button>
-                                                </div>
                                             </table>
+                                            <div class="btn-group btn-group-circle">
+                                                <button type="button" class="btn btn-default" ng-click="prePage(1)">Đầu</button>
+                                                <button type="button" class="btn btn-default" ng-click="prePage(0)">Lùi</button>
+                                                <button ng-class="{'blue' : page === i}" type="button" class="btn btn-default" ng-click="pageChanged(i)" ng-repeat="i in pageCountNum">{{i > 10 ? i : '0' + i}}</button>
+                                                <button type="button" class="btn btn-default" ng-click="nextPage(0)">Tới</button>
+                                                <button type="button" class="btn btn-default" ng-click="nextPage(1)">Cuối</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <!-- <td>
+                                                            ID
+                                                        </td> -->
+                                                        <td style="width: 50%;">
+                                                            Nội dung
+                                                        </td>
+                                                        <td>
+                                                            Ngày tạo
+                                                        </td>
+                                                        <td>
+                                                            Tác vụ
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="post in displayItems_post | limitTo: itemsDisplay_post:page_post-1">
+                                                        <!--  | orderBy: '-total_reactions' -->
+                                                        <!-- <td>
+                                                            <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.post_id}}</a>
+                                                        </td> -->
+                                                        <td>
+                                                            <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.message.length > 30 ? (post.message.substring(0,30) + "...") : post.message}}</a>
+                                                        </td>
+                                                        <td>
+                                                            <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.created_time}}</a>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:;" class="btn btn-sm btn-circle red easy-pie-chart-reload">
+                                                            <i class="fa fa-repeat"></i> Chọn </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="btn-group btn-group-circle">
+                                                <button type="button" class="btn btn-default" ng-click="prePage_post(1)">Đầu</button>
+                                                <button type="button" class="btn btn-default" ng-click="prePage_post(0)">Lùi</button>
+                                                <button ng-class="{'blue' : page_post === i}" type="button" class="btn btn-default" ng-click="pageChanged_post(i)" ng-repeat="i in pageCountNum_post">{{i > 10 ? i : '0' + i}}</button>
+                                                <button type="button" class="btn btn-default" ng-click="nextPage_post(0)">Tới</button>
+                                                <button type="button" class="btn btn-default" ng-click="nextPage_post(1)">Cuối</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div ng-show="server.id == 'fanpage' ? true : false">
-
-                                </div>
-                                <div ng-show="server.id == 'fanpage_admin' ? true : false">
-
                                 </div>
                             </div>
                         </div>

@@ -208,6 +208,7 @@ myApp.controller('fbController', ['$scope', '$filter', '$http', '$sce', function
         setDisplayItems(data);
         $scope.page = 1;
         $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
+        $scope.pageCountNum = Setting($scope.pageCountNum, $scope.page);
     }
     $scope.pageChanged = function (page) {
         $scope.page = page;
@@ -854,33 +855,69 @@ myApp.controller('menuLeftController', ['$scope', '$location', '$rootScope', fun
         $scope.menu_musiz = musiz;
     }
 }]);
-myApp.controller('cmtController', ['$scope', '$filter', '$http', '$sce', function ($scope, $filter, $http, $sce) {
+myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
     $scope.author = author();
     $scope.loadingCss = false;
     $scope.server = { id: 'friend', name: 'Từ wall bạn bè' };
+    $scope.planholder = 'Nhập tên để lọc';
     $scope.changerServer = function (type) {
         if (type == 'friend') {
             $scope.server.id = 'friend';
             $scope.server.name = 'Từ wall bạn bè';
+            $scope.planholder = 'Nhập tên để lọc';
         } if (type == 'fanpage') {
             $scope.server.id = 'fanpage';
             $scope.server.name = 'Từ wall Fan Page';
+            $scope.planholder = 'Nhập link fanpage vào đây và nhấn Enter';
         } if (type == 'fanpage_admin') {
             $scope.server.id = 'fanpage_admin';
             $scope.server.name = 'Từ wall Fan Page bạn quản lý';
+            $scope.planholder = 'Nhập tên để lọc';
         }
     }
     $scope.getAllFriend = function () {
         $scope.loadingCss = true;
-        var api_get_friends = "https://graph.facebook.com/fql?q=SELECT+uid,name+FROM+user+WHERE+uid+IN+(SELECT+uid2+FROM+friend+WHERE+uid1+=+me())&access_token=" + $scope.access_token;
+        var api_get_friends = "https://graph.facebook.com/fql?q=SELECT+uid,name,pic+FROM+user+WHERE+uid+IN+(SELECT+uid2+FROM+friend+WHERE+uid1+=+me())&access_token=" + $scope.access_token;
+        var api_get_page_admin = "https://graph.facebook.com/fql?q=select+page_id,name,pic,page_url+from+page+where+page_id+in+(+SELECT+page_id+FROM+page_admin+WHERE+uid=me())&access_token=" + $scope.access_token;
+        var api_get_page_from_url = "https://graph.facebook.com/v2.7/" + $scope.filterText + "?fields=id,name,picture&access_token=" + $scope.access_token;
+        var api_get = "";
+        if ($scope.server.id == 'friend') {
+            api_get = api_get_friends;
+        } else if ($scope.server.id == 'fanpage') {
+            api_get = api_get_page_from_url;
+        } else {
+            api_get = api_get_page_admin;
+        }
         var req = {
             method: 'GET',
-            url: api_get_friends
+            url: api_get
         };
         $http(req).then(function success(res) {
-            console.log(res.data);
-            $scope.pageCount = res.data.length;
-            setDisplayItems(res.data);
+            $scope.friends = [];
+            var data = [];
+            if ($scope.server.id == 'friend') {
+                data = res.data.data;
+            } else if ($scope.server.id == 'fanpage') {
+                var element = res.data;
+                var obj_fanpage = {
+                    uid: element.id,
+                    name: element.name,
+                    pic: element.picture.data.url
+                };
+                data.push(obj_fanpage);
+            } else if ($scope.server.id == 'fanpage_admin') {
+                res.data.data.forEach(function (element) {
+                    var obj_fanpage = {
+                        uid: element.page_id,
+                        name: element.name,
+                        pic: element.pic
+                    };
+                    data.push(obj_fanpage);
+                }, this);
+            }
+            $scope.friends = data;
+            $scope.pageCount = data.length;
+            setDisplayItems($scope.friends);
             $scope.loadingCss = false;
         }, function error(res) {
             console.log(res);
@@ -888,32 +925,32 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', '$sce', functio
         });
     }
     $scope.page = 1;
-    $scope.itemsDisplay = 10;
+    $scope.itemsDisplay = 5;
     $scope.pageCountNum = [];
     $scope.filterItems = function () {
-        var data = $filter('filter')($scope.friends_final, $scope.filterText, false, 'name');
+        var data = $filter('filter')($scope.friends, $scope.filterText, false, 'name');
         setDisplayItems(data);
         $scope.page = 1;
         $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
+        $scope.pageCountNum = Setting($scope.pageCountNum, $scope.page);
     }
     $scope.pageChanged = function (page) {
         $scope.page = page;
         var startPos = (page - 1) * $scope.itemsDisplay;
-        $scope.displayItems = $scope.friends_final.slice(startPos, startPos + $scope.itemsDisplay);
-        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, $scope.friends_final.length);
+        $scope.displayItems = $scope.friends.slice(startPos, startPos + $scope.itemsDisplay);
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, $scope.friends.length);
         $scope.pageCountNum = Setting($scope.pageCountNum, page);
     };
     $scope.prePage = function (type) {
         if (type == 0) {
             $scope.page = ($scope.page - 1 <= 0 ? 1 : $scope.page - 1);
-
         } else {
             $scope.page = 1;
         }
         $scope.pageChanged($scope.page);
     }
     $scope.nextPage = function (type) {
-        var d = CalcPageCount($scope.itemsDisplay, $scope.friends_final.length).length;
+        var d = CalcPageCount($scope.itemsDisplay, $scope.friends.length).length;
         if (type == 0) {
             $scope.page = ($scope.page + 1 > d ? $scope.page : $scope.page + 1);
         } else {
@@ -921,12 +958,85 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', '$sce', functio
         }
         $scope.pageChanged($scope.page);
     }
+    $scope.onShow = function (obj) {
+        $scope.loadingCss = true;
+        var api_get_wall = 'https://graph.facebook.com/fql?q=SELECT+post_id,+message,created_time+FROM+stream+WHERE+source_id+=+' + obj.friend.uid + '+AND+created_time+>=+1500915600+AND+created_time+<=+now()&access_token=' + $scope.access_token
+        var req = {
+            method: 'GET',
+            url: api_get_wall
+        }
+        $http(req).then(function success(res) {
+            $scope.post = res.data.data;
+            $scope.pageCount_post = res.data.data.length;
+            setDisplayItems_post($scope.post);
+            $scope.loadingCss = false;
+        }, function error(res) {
+            console.log(res.data.data);
+            $scope.loadingCss = false;
+        });
+    };
     function setDisplayItems(data) {
         $scope.displayItems = data;
         $scope.pageCount = data.length;
         $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
         $scope.pageCountNum = Setting($scope.pageCountNum, $scope.page);
     }
+    // phan trang 2
+    $scope.page_post = 1;
+    $scope.itemsDisplay_post = 5;
+    $scope.pageCountNum_post = [];
+    $scope.filterItems_post = function () {
+        var data = $filter('filter')($scope.post, $scope.filterText_post, false, 'name');
+        setDisplayItems_post(data);
+        $scope.page_post = 1;
+        $scope.pageCountNum_post = CalcPageCount($scope.itemsDisplay_post, data.length);
+        $scope.pageCountNum_post = Setting($scope.pageCountNum_post, $scope.page_post);
+    }
+    $scope.pageChanged_post = function (page) {
+        $scope.page_post = page;
+        var startPos = (page - 1) * $scope.itemsDisplay_post;
+        $scope.displayItems_post = $scope.post.slice(startPos, startPos + $scope.itemsDisplay_post);
+        $scope.pageCountNum_post = CalcPageCount($scope.itemsDisplay_post, $scope.post.length);
+        $scope.pageCountNum_post = Setting($scope.pageCountNum_post, page);
+    };
+    $scope.prePage_post = function (type) {
+        if (type == 0) {
+            $scope.page_post = ($scope.page_post - 1 <= 0 ? 1 : $scope.page_post - 1);
+        } else {
+            $scope.page_post = 1;
+        }
+        $scope.pageChanged_post($scope.page_post);
+    }
+    $scope.nextPage_post = function (type) {
+        var d = CalcPageCount($scope.itemsDisplay_post, $scope.post.length).length;
+        if (type == 0) {
+            $scope.page_post = ($scope.page_post + 1 > d ? $scope.page_post : $scope.page_post + 1);
+        } else {
+            $scope.page_post = d;
+        }
+        $scope.pageChanged_post($scope.page_post);
+    }
+    function setDisplayItems_post(data) {
+        $scope.displayItems_post = data;
+        $scope.pageCount_post = data.length;
+        $scope.pageCountNum_post = CalcPageCount($scope.itemsDisplay_post, data.length);
+        $scope.pageCountNum_post = Setting($scope.pageCountNum_post, $scope.page_post);
+    }
+
+    $scope.copyPasted = function () {
+        setTimeout(function () {
+            if ($scope.server.id !== 'fanpage') {
+                $scope.getAllFriend();
+            }
+        }, 50);
+    };
+    $scope.copyPasted_url = function () {
+        setTimeout(function () {
+            if ($scope.server.id == 'fanpage') {
+                $scope.getAllFriend();
+            }
+        }, 50);
+    };
 }]);
 function removeByValue(array, value) {
     return array.filter(function (elem, _index) {
@@ -973,7 +1083,6 @@ function CalcPageCount(itemPerPage, Items) {
     return a;
 }
 var Setting = function (arrayCount, currentPage) {
-    debugger;
     var p = [];
     if (arrayCount.length > 7) {
         if (currentPage == 1) {
@@ -997,6 +1106,10 @@ var Setting = function (arrayCount, currentPage) {
             p.push(2);
             p.push(3);
         }
+    } else {
+        arrayCount.forEach(function (element) {
+            p.push(element);
+        }, this);
     }
     p = p.sort(function (a, b) { return a - b });
     console.log(p);
