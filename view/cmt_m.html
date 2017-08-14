@@ -68,9 +68,9 @@
                                             </ul>
                                         </div>
 
-                                        <input placeholder="Access token" ng-model="keyword" ng-keydown="$event.keyCode === 13 && search()" type="text" class="form-control">
+                                        <input placeholder="Access token" ng-model="access_token" ng-keydown="$event.keyCode === 13 && search()" type="text" class="form-control">
                                         <div class="input-group-btn btn-group btn-group-circle btn-group-solid">
-                                            <button ng-click="search()" type="button" class="btn green dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <button ng-click="getAllFriend()" type="button" class="btn green dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                 Gửi
                                                         </button>
 
@@ -98,6 +98,51 @@
                                 <div ng-show="server.id == 'friend' ? true : false">
                                     <div class="col-md-12">
                                         <div class="col-md-5">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <td>
+                                                            ID
+                                                        </td>
+                                                        <td style="width: 25%;">
+                                                            Tên
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:;" class="btn btn-sm btn-circle red easy-pie-chart-reload">
+                                            <i class="fa fa-repeat"></i> Chọn </a>
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="friend in displayItems | limitTo: itemsDisplay:page-1 | orderBy: '-total_reactions'">
+                                                        <!--  | orderBy: '-total_reactions' -->
+                                                        <td>
+                                                            <a target="_blank" href="https://fb.com/{{friend.uid}}">{{friend.uid}}</a>
+                                                        </td>
+                                                        <td>
+                                                            <a target="_blank" href="https://fb.com/{{friend.uid}}">{{friend.name}}</a>
+                                                        </td>
+                                                        <td>
+                                                            <img src="{{friend.picture}}" width="50" height="50">
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                        <td>
+                                                            {{friend.total_reactions}}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <uib-pagination class="pagination-sm pagination" total-items="pageCount" ng-model="page" ng-change="pageChanged()" previous-text="&lsaquo;"
+                                                    next-text="&rsaquo;" items-per-page=3></uib-pagination>
+                                                <div class="btn-group btn-group-circle">
+
+                                                    <button type="button" class="btn btn-default" ng-click="prePage(1)">Đầu</button>
+                                                    <button type="button" class="btn btn-default" ng-click="prePage(0)">Lùi</button>
+                                                    <button ng-class="{'blue' : page === i}" type="button" class="btn btn-default" ng-click="pageChanged(i)" ng-repeat="i in pageCountNum">{{i > 10 ? i : '0' + i}}</button>
+                                                    <button type="button" class="btn btn-default" ng-click="nextPage(0)">Tới</button>
+                                                    <button type="button" class="btn btn-default" ng-click="nextPage(1)">Cuối</button>
+                                                </div>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>

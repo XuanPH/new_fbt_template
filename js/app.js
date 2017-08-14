@@ -870,6 +870,63 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', '$sce', functio
             $scope.server.name = 'Từ wall Fan Page bạn quản lý';
         }
     }
+    $scope.getAllFriend = function () {
+        $scope.loadingCss = true;
+        var api_get_friends = "https://graph.facebook.com/fql?q=SELECT+uid,name+FROM+user+WHERE+uid+IN+(SELECT+uid2+FROM+friend+WHERE+uid1+=+me())&access_token=" + $scope.access_token;
+        var req = {
+            method: 'GET',
+            url: api_get_friends
+        };
+        $http(req).then(function success(res) {
+            console.log(res.data);
+            $scope.pageCount = res.data.length;
+            setDisplayItems(res.data);
+            $scope.loadingCss = false;
+        }, function error(res) {
+            console.log(res);
+            $scope.loadingCss = false;
+        });
+    }
+    $scope.page = 1;
+    $scope.itemsDisplay = 10;
+    $scope.pageCountNum = [];
+    $scope.filterItems = function () {
+        var data = $filter('filter')($scope.friends_final, $scope.filterText, false, 'name');
+        setDisplayItems(data);
+        $scope.page = 1;
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
+    }
+    $scope.pageChanged = function (page) {
+        $scope.page = page;
+        var startPos = (page - 1) * $scope.itemsDisplay;
+        $scope.displayItems = $scope.friends_final.slice(startPos, startPos + $scope.itemsDisplay);
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, $scope.friends_final.length);
+        $scope.pageCountNum = Setting($scope.pageCountNum, page);
+    };
+    $scope.prePage = function (type) {
+        if (type == 0) {
+            $scope.page = ($scope.page - 1 <= 0 ? 1 : $scope.page - 1);
+
+        } else {
+            $scope.page = 1;
+        }
+        $scope.pageChanged($scope.page);
+    }
+    $scope.nextPage = function (type) {
+        var d = CalcPageCount($scope.itemsDisplay, $scope.friends_final.length).length;
+        if (type == 0) {
+            $scope.page = ($scope.page + 1 > d ? $scope.page : $scope.page + 1);
+        } else {
+            $scope.page = d;
+        }
+        $scope.pageChanged($scope.page);
+    }
+    function setDisplayItems(data) {
+        $scope.displayItems = data;
+        $scope.pageCount = data.length;
+        $scope.pageCountNum = CalcPageCount($scope.itemsDisplay, data.length);
+        $scope.pageCountNum = Setting($scope.pageCountNum, $scope.page);
+    }
 }]);
 function removeByValue(array, value) {
     return array.filter(function (elem, _index) {
@@ -934,7 +991,7 @@ var Setting = function (arrayCount, currentPage) {
             for (var i = arrayCount.length; i > arrayCount.length - 3; i--) {
                 p.push(i);
             }
-        }  
+        }
         if (currentPage + 3 >= arrayCount.length) {
             p.push(1);
             p.push(2);
