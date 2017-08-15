@@ -30,6 +30,35 @@
                     <i class="fa fa-facebook-official font-red-sunglo"></i>
                     <span class="caption-subject font-red-sunglo bold uppercase">Cấu hình</span>
                 </div>
+                <div class="actions">
+                    <div class="btn-group btn-group-circle btn-group-xs btn-group-solid">
+                        <a href="javascript:;" ng-click="saveCookie()" class="btn red" style="width: 100px;"> Lưu phiên ({{badge_save}})</a>
+                        <a href="javascript:;" ng-click="openCookie()" class="btn blue" style="width: 100px;"> Mở lưu ({{badge_save}})</a>
+                        <a href="javascript:;" ng-click="clearCookie()" class="btn green" style="width: 100px;"> Xóa lưu ({{badge_save}})</a>
+                    </div>
+                    <!-- <div class="btn-group">
+                        <a class="btn btn-circle green-haze btn-outline btn-circle btn-sm" href="javascript:;" data-toggle="dropdown" data-hover="dropdown"
+                            data-close-others="true" aria-expanded="false"> Actions
+                                                                    <i class="fa fa-angle-down"></i>
+                                                                </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="javascript:;">
+                                                                            <i class="i"></i> Option 1</a>
+                            </li>
+                            <li class="divider"> </li>
+                            <li>
+                                <a href="javascript:;">Option 2</a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">Option 3</a>
+                            </li>
+                            <li>
+                                <a href="javascript:;">Option 4</a>
+                            </li>
+                        </ul>
+                    </div> -->
+                </div>
             </div>
             <div class="portlet-body">
                 <div class="row">
@@ -85,25 +114,51 @@
                         </div>
                         <br>
                     </div>
-
-                    <div class="portlet box blue">
-                        <div class="portlet-title">
-                            <div class="caption">
-                                <div class="input-group" style="width: 40%;float:left;">
-                                    <span id="url-addon" class="input-group-addon">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="portlet box blue ">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <div class="input-group" style="width: 100%;float:left;">
+                                                <span id="url-addon" class="input-group-addon">
                                             <span aria-hidden="true" class="glyphicon glyphicon-filter"></span>
-                                    </span>
-                                    <input ng-paste="copyPasted_url()" class="form-control ng-pristine ng-valid" ng-model="filterText" ng-change="filterItems()"
-                                        placeholder="{{planholder}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="portlet-body tabs-below">
-                            <div class="row">
-                                <div>
-                                    <div class="col-md-12">
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered">
+                                                </span>
+                                                <input ng-paste="copyPasted_url()" class="form-control ng-pristine ng-valid" ng-model="filterText" ng-change="filterItems()"
+                                                    placeholder="{{planholder}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body tabs-below">
+                                        <div class="row">
+                                            <div>
+                                                <div class="col-md-12">
+                                                    <div class="mt-actions" ng-repeat="friend in displayItems | limitTo: itemsDisplay:page-1 | orderBy: '-total_reactions'">
+                                                        <div class="mt-action">
+                                                            <div class="mt-action-img">
+                                                                <img style="width: 36px;height: 36px;" src="{{friend.pic}}">
+                                                            </div>
+                                                            <div class="mt-action-body">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="icon-user"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-dot bg-green"></span>
+                                                                            <span class="mt-action-author">  <a target="_blank" href="https://fb.com/{{friend.uid}}">{{friend.name}}</a></span>
+                                                                            <p class="mt-action-desc"> <a target="_blank" href="https://fb.com/{{friend.uid}}">{{friend.uid}}</a></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="mt-action-buttons ">
+                                                                        <a ng-click="onShow(this)" href="javascript:;" class="btn btn-sm btn-circle red easy-pie-chart-reload">
+                                                            <i class="fa fa-repeat"></i> Chọn </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- <table class="table table-bordered">
                                                 <thead>
                                                     <tr>
                                                         <td>
@@ -122,7 +177,6 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat="friend in displayItems | limitTo: itemsDisplay:page-1 | orderBy: '-total_reactions'">
-                                                        <!--  | orderBy: '-total_reactions' -->
                                                         <td>
                                                             <a target="_blank" href="https://fb.com/{{friend.uid}}">{{friend.uid}}</a>
                                                         </td>
@@ -138,64 +192,93 @@
                                                         </td>
                                                     </tr>
                                                 </tbody>
-                                            </table>
-                                            <div class="btn-group btn-group-circle">
-                                                <button type="button" class="btn btn-default" ng-click="prePage(1)">Đầu</button>
-                                                <button type="button" class="btn btn-default" ng-click="prePage(0)">Lùi</button>
-                                                <button ng-class="{'blue' : page === i}" type="button" class="btn btn-default" ng-click="pageChanged(i)" ng-repeat="i in pageCountNum">{{i > 10 ? i : '0' + i}}</button>
-                                                <button type="button" class="btn btn-default" ng-click="nextPage(0)">Tới</button>
-                                                <button type="button" class="btn btn-default" ng-click="nextPage(1)">Cuối</button>
+                                            </table> -->
+                                                    <div class="btn-group btn-group-circle">
+                                                        <button type="button" class="btn btn-default" ng-click="prePage(1)">Đầu</button>
+                                                        <button type="button" class="btn btn-default" ng-click="prePage(0)">Lùi</button>
+                                                        <button ng-class="{'blue' : page === i}" type="button" class="btn btn-default" ng-click="pageChanged(i)" ng-repeat="i in pageCountNum">{{i > 10 ? i : '0' + i}}</button>
+                                                        <button type="button" class="btn btn-default" ng-click="nextPage(0)">Tới</button>
+                                                        <button type="button" class="btn btn-default" ng-click="nextPage(1)">Cuối</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <!-- <td>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="portlet box blue">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <div class="input-group" style="width: 40%;float:left;">
+                                                <span id="url-addon" class="input-group-addon">
+                                            <span aria-hidden="true" class="glyphicon glyphicon-filter"></span>
+                                                </span>
+                                                <input class="form-control ng-pristine ng-valid" ng-model="filterText_post" ng-change="filterItems_post()" placeholder="Nhập nội dung bài viết">
+                                            </div>
+                                            <div class="input-group" style="width: 40%;float:left;margin-left:20px;">
+                                                <span id="url-addon" class="input-group-addon">
+                                            <span aria-hidden="true" class="glyphicon glyphicon-filter"></span>
+                                                </span>
+                                                <input class="form-control ng-pristine ng-valid" ng-model="filterText_post_time" ng-change="filterItems_post()" placeholder="Nhập ngày">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body tabs-below">
+                                        <div class="row">
+                                            <div>
+                                                <div class="col-md-12">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <!-- <td>
                                                             ID
                                                         </td> -->
-                                                        <td style="width: 50%;">
-                                                            Nội dung
-                                                        </td>
-                                                        <td>
-                                                            Ngày tạo
-                                                        </td>
-                                                        <td>
-                                                            Tác vụ
-                                                        </td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr ng-repeat="post in displayItems_post | limitTo: itemsDisplay_post:page_post-1">
-                                                        <!--  | orderBy: '-total_reactions' -->
-                                                        <!-- <td>
+                                                                <td style="width: 50%;">
+                                                                    Nội dung
+                                                                </td>
+                                                                <td>
+                                                                    Ngày tạo
+                                                                </td>
+                                                                <td>
+                                                                    Tác vụ
+                                                                </td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="post in displayItems_post | limitTo: itemsDisplay_post:page_post-1">
+                                                                <!--  | orderBy: '-total_reactions' -->
+                                                                <!-- <td>
                                                             <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.post_id}}</a>
                                                         </td> -->
-                                                        <td>
-                                                            <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.message.length > 30 ? (post.message.substring(0,30) + "...") : post.message}}</a>
-                                                        </td>
-                                                        <td>
-                                                            <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.created_time}}</a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:;" class="btn btn-sm btn-circle red easy-pie-chart-reload">
-                                                            <i class="fa fa-repeat"></i> Chọn </a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <div class="btn-group btn-group-circle">
-                                                <button type="button" class="btn btn-default" ng-click="prePage_post(1)">Đầu</button>
-                                                <button type="button" class="btn btn-default" ng-click="prePage_post(0)">Lùi</button>
-                                                <button ng-class="{'blue' : page_post === i}" type="button" class="btn btn-default" ng-click="pageChanged_post(i)" ng-repeat="i in pageCountNum_post">{{i > 10 ? i : '0' + i}}</button>
-                                                <button type="button" class="btn btn-default" ng-click="nextPage_post(0)">Tới</button>
-                                                <button type="button" class="btn btn-default" ng-click="nextPage_post(1)">Cuối</button>
+                                                                <td>
+                                                                    <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.message.length > 30 ? (post.message.substring(0,30) + "...") : post.message}}</a>
+                                                                </td>
+                                                                <td>
+                                                                    <a target="_blank" href="https://fb.com/{{post.post_id}}">{{post.created_time}}</a>
+                                                                </td>
+                                                                <td>
+                                                                    <a ng-click="onScanCmt(this)" href="javascript:;" class="btn btn-sm btn-circle blue easy-pie-chart-reload">
+                                                            <i class="fa fa-barcode"></i> Quét bình luận </a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="btn-group btn-group-circle">
+                                                        <button type="button" class="btn btn-default" ng-click="prePage_post(1)">Đầu</button>
+                                                        <button type="button" class="btn btn-default" ng-click="prePage_post(0)">Lùi</button>
+                                                        <button ng-class="{'blue' : page_post === i}" type="button" class="btn btn-default" ng-click="pageChanged_post(i)" ng-repeat="i in pageCountNum_post">{{i > 10 ? i : '0' + i}}</button>
+                                                        <button type="button" class="btn btn-default" ng-click="nextPage_post(0)">Tới</button>
+                                                        <button type="button" class="btn btn-default" ng-click="nextPage_post(1)">Cuối</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 </br>
@@ -205,12 +288,50 @@
             <div class="portlet-title">
                 <div class="caption">
                     <i class="fa fa-facebook-official font-red-sunglo"></i>
-                    <span class="caption-subject font-red-sunglo bold uppercase">Timeline</span>
+                    <span class="caption-subject font-red-sunglo bold uppercase">Timeline ({{displayItems_cmt.length}})</span>
+                </div>
+                <div class="inputs">
+                    <div class="portlet-input input-inline">
+                        <div class="input-icon right">
+                            <i class="icon-magnifier"></i>
+                            <input ng-model="filterText_cmt" ng-change="filterItems_cmt()" type="text" class="form-control form-control-solid input-circle"
+                                placeholder="Tìm nội dung bình luận..."> </div>
+                    </div>
                 </div>
             </div>
             <div class="portlet-body">
-
                 <div class="row">
+                    <div class="portlet-body">
+                        <div class="slimScrollDiv">
+                            <div class="scroller" style="margin-right: 50px;margin-left: 50px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2"
+                                data-initialized="1">
+                                <div class="general-item-list">
+                                    <div class="item" ng-repeat="cmt in displayItems_cmt | limitTo: itemsDisplay_cmt:pagecmt-1">
+                                        <div class="item-head">
+                                            <div class="item-details">
+                                                <img style="width: 35px;" class="item-pic rounded" src="{{cmt.user.pic}}">
+                                                <a target="_blank" href="https://fb.com/{{cmt.user.uid}}" class="item-name primary-link">{{cmt.user.name}}</a>
+                                                <span class="item-label">{{cmt.time}}</span>
+                                            </div>
+                                            <span class="item-status">
+                                                        <span class="badge badge-empty badge-success"></span>
+                                            <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
+                                        </div>
+                                        <div class="item-body" style="margin-left: 50px;">{{cmt.text}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slimScrollBar" style="background: rgb(215, 220, 226); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; height: 174.685px;"></div>
+                            <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                        </div>
+                        <div class="btn-group btn-group-circle">
+                            <button type="button" class="btn btn-default" ng-click="prePage_cmt(1)">Đầu</button>
+                            <button type="button" class="btn btn-default" ng-click="prePage_cmt(0)">Lùi</button>
+                            <button ng-class="{'blue' : page_cmt === i}" type="button" class="btn btn-default" ng-click="pageChanged_cmt(i)" ng-repeat="i in pageCountNum_cmt">{{i > 10 ? i : '0' + i}}</button>
+                            <button type="button" class="btn btn-default" ng-click="nextPage_cmt(0)">Tới</button>
+                            <button type="button" class="btn btn-default" ng-click="nextPage_cmt(1)">Cuối</button>
+                        </div>
+                    </div>
                 </div>
                 </br>
             </div>
