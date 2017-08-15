@@ -1155,16 +1155,18 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
                 time_number: element.time * 10000,
                 user: obj_user
             };
-            $scope.comments.push(obj_fanpage);
-            $scope.pageCount = $scope.comments.length;
-            setDisplayItems_cmt($scope.comments);
+            if (obj_user.uid !== undefined) {
+                $scope.comments.push(obj_fanpage);
+                $scope.pageCount = $scope.comments.length;
+                setDisplayItems_cmt($scope.comments);
+            }
             //return obj_fanpage;
         }, function error(res) {
             console.log(res);
         });
     }
     $scope.filterItems_cmt = function () {
-        var data = $filter('filter')($scope.comments, $scope.filterText_cmt, false, 'text');
+        var data = $filter('filter')($scope.comments, $scope.filterText_cmt, $scope.exact_find, 'text');
         setDisplayItems_cmt(data);
         $scope.page_cmt = 1;
         $scope.pageCountNum_cmt = CalcPageCount($scope.itemsDisplay_cmt, data.length);
@@ -1192,7 +1194,7 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
         } else {
             $scope.page_cmt = d;
         }
-        $scope.pageChanged_post($scope.page_cmt);
+        $scope.pageChanged_cmt($scope.page_cmt);
     }
     function setDisplayItems_cmt(data) {
         $scope.displayItems_cmt = data;
@@ -1307,5 +1309,8 @@ function formatDate(date) {
     hours = hours < 10 ? '0' + hours : hours;
     minutes = minutes < 10 ? '0' + minutes : minutes;
     var strTime = hours + ':' + minutes + ' ';
-    return date.getDate() + "/" + ((date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "/" + date.getFullYear() + "  " + strTime;
+    return (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + "/" + ((date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "/" + date.getFullYear() + "  " + strTime;
+}
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
