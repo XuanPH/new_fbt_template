@@ -284,60 +284,85 @@
                 </br>
             </div>
         </div>
-        <div class="portlet light bordered">
-            <div class="portlet-title">
-                <div class="caption">
-                    <i class="fa fa-facebook-official font-red-sunglo"></i>
-                    <span class="caption-subject font-red-sunglo bold uppercase">Timeline ({{displayItems_cmt.length}})</span>
-                </div>
-                <div class="inputs">
-                    <label class="mt-checkbox mt-checkbox-outline">
-                                                            <input type="checkbox" ng-model="exact_find" ng-checked="filterItems_cmt()"> Tìm chính xác
+        <div class="col-md-12">
+            <div class="col-md-6">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-facebook-official font-red-sunglo"></i>
+                            <span class="caption-subject font-red-sunglo bold uppercase">Timeline ({{displayItems_cmt.length}})</span>
+                        </div>
+                        <div class="inputs">
+                            <label class="mt-checkbox mt-checkbox-outline">
+                                                            <input type="checkbox" ng-model="exact_find" ng-change="filterItems_cmt()" checked> Tìm chính xác
                                                             <span></span>
                                                         </label>
-                    <div class="portlet-input input-inline">
-                        <div class="input-icon right">
-                            <i class="icon-magnifier"></i>
-                            <input ng-model="filterText_cmt" ng-change="filterItems_cmt()" type="text" class="form-control form-control-solid input-circle"
-                                placeholder="Tìm nội dung bình luận..."> </div>
+                            <div class="portlet-input input-inline">
+                                <div class="input-icon right">
+                                    <i class="icon-magnifier"></i>
+                                    <input ng-model="filterText_cmt" ng-change="filterItems_cmt()" type="text" class="form-control form-control-solid input-circle"
+                                        placeholder="Tìm nội dung bình luận..."> </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="portlet-body">
+                                <div class="slimScrollDiv">
+                                    <div class="scroller" style="margin-right: 50px;margin-left: 50px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2"
+                                        data-initialized="1">
+                                        <div class="general-item-list">
+                                            <div class="item" ng-repeat="cmt in displayItems_cmt | limitTo: itemsDisplay_cmt:pagecmt-1">
+                                                <div class="item-head">
+                                                    <div class="item-details">
+                                                        <img style="width: 35px;" class="item-pic rounded" src="{{cmt.user.pic}}">
+                                                        <a target="_blank" href="https://fb.com/{{cmt.user.uid}}" class="item-name primary-link">{{cmt.user.name}}</a>
+                                                        <span class="item-label">{{cmt.time}}</span>
+                                                    </div>
+                                                    <span class="item-status">
+                                                        <span class="badge badge-empty badge-success"></span>
+                                                    <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
+                                                </div>
+                                                <div class="item-body" style="margin-left: 50px;">{{cmt.text}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slimScrollBar" style="background: rgb(215, 220, 226); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; height: 174.685px;"></div>
+                                    <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                                </div>
+                                <div class="btn-group btn-group-circle">
+                                    <button type="button" class="btn btn-default" ng-click="prePage_cmt(1)">Đầu</button>
+                                    <button type="button" class="btn btn-default" ng-click="prePage_cmt(0)">Lùi</button>
+                                    <button ng-class="{'blue' : page_cmt === i}" type="button" class="btn btn-default" ng-click="pageChanged_cmt(i)" ng-repeat="i in pageCountNum_cmt">{{i > 10 ? i : '0' + i}}</button>
+                                    <button type="button" class="btn btn-default" ng-click="nextPage_cmt(0)">Tới</button>
+                                    <button type="button" class="btn btn-default" ng-click="nextPage_cmt(1)">Cuối</button>
+                                </div>
+                            </div>
+                        </div>
+                        </br>
                     </div>
                 </div>
             </div>
-            <div class="portlet-body">
-                <div class="row">
-                    <div class="portlet-body">
-                        <div class="slimScrollDiv">
-                            <div class="scroller" style="margin-right: 50px;margin-left: 50px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2"
-                                data-initialized="1">
-                                <div class="general-item-list">
-                                    <div class="item" ng-repeat="cmt in displayItems_cmt | limitTo: itemsDisplay_cmt:pagecmt-1">
-                                        <div class="item-head">
-                                            <div class="item-details">
-                                                <img style="width: 35px;" class="item-pic rounded" src="{{cmt.user.pic}}">
-                                                <a target="_blank" href="https://fb.com/{{cmt.user.uid}}" class="item-name primary-link">{{cmt.user.name}}</a>
-                                                <span class="item-label">{{cmt.time}}</span>
-                                            </div>
-                                            <span class="item-status">
-                                                        <span class="badge badge-empty badge-success"></span>
-                                            <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
-                                        </div>
-                                        <div class="item-body" style="margin-left: 50px;">{{cmt.text}}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="slimScrollBar" style="background: rgb(215, 220, 226); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; height: 174.685px;"></div>
-                            <div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div>
-                        </div>
-                        <div class="btn-group btn-group-circle">
-                            <button type="button" class="btn btn-default" ng-click="prePage_cmt(1)">Đầu</button>
-                            <button type="button" class="btn btn-default" ng-click="prePage_cmt(0)">Lùi</button>
-                            <button ng-class="{'blue' : page_cmt === i}" type="button" class="btn btn-default" ng-click="pageChanged_cmt(i)" ng-repeat="i in pageCountNum_cmt">{{i > 10 ? i : '0' + i}}</button>
-                            <button type="button" class="btn btn-default" ng-click="nextPage_cmt(0)">Tới</button>
-                            <button type="button" class="btn btn-default" ng-click="nextPage_cmt(1)">Cuối</button>
+            <div class="col-md-6">
+                <div class="portlet light bordered">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-facebook-official font-red-sunglo"></i>
+                            <span class="caption-subject font-red-sunglo bold uppercase">Kết quả xổ số và random số</span>
                         </div>
                     </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="portlet-body">
+                                <div class="col-md-12">
+                                    <iframe style="width:100%" src="http://www.minhngoc.net.vn/free/index.php" width="500" height="2000" frameborder="0" scrolling="auto" id="iframe_xosominhngoc"
+                                        name="iframe_xosominhngoc"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        </br>
+                    </div>
                 </div>
-                </br>
             </div>
         </div>
     </div>

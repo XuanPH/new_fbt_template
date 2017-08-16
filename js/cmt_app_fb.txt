@@ -2,7 +2,7 @@ Link API: https://graph.facebook.com/fql?q=FQL&access_token=AccessToken
 FQL:
 AccessToken : EAACW5Fg5N2IBABarRKZA8voM7k7qh95G0hH0smIZCFfgspYffQy2v7rPvs7ItS5qDeJDpdvItmoglxRb4aOcAx7LsM7sMbyX7KbVnWJoRzW9pJhFsLkf5vtVUt3aI7Sloe9TsD1ePulifUuDWAyMPaBNY9ZC8s6vB2YFGct6V7ZCiUEG8G6G 
 
-Get Comment from status : 
+Lấy tất cả bình luận từ bài viết
 https://graph.facebook.com/fql?q=SELECT+id,+text,+time,+fromid,+is_private+FROM+comment
 +WHERE+post_id="100003455062019_862606537197840"&access_token=EAACW5Fg5N2IBABarRKZA8voM7k7qh95G0hH0smIZCFfgspYffQy2v7rPvs7ItS5qDeJDpdvItmoglxRb4aOcAx7LsM7sMbyX7KbVnWJoRzW9pJhFsLkf5vtVUt3aI7Sloe9TsD1ePulifUuDWAyMPaBNY9ZC8s6vB2YFGct6V7ZCiUEG8G6G
 
@@ -17,12 +17,11 @@ console.log("create: " +new Date(1502068059*1000)) --> từ số ra ngày
 console.log("create: " + new Date(2017,08-1,07,08,07,39)) --> tạo ngày mới ( lưu ý: tháng -1)
 console.log("create get time: " + new Date(2017,08-1,07,08,07,39).getTime()/1000) --> từ ngày ra số
 
-
-get All friend from User:
+Lấy tất cả bạn bè của user
 https://graph.facebook.com/fql?q=SELECT+uid,name+FROM+user+WHERE+uid+IN+(SELECT+uid2+FROM+friend+WHERE+uid1+=+me())
 &access_token=EAACW5Fg5N2IBABarRKZA8voM7k7qh95G0hH0smIZCFfgspYffQy2v7rPvs7ItS5qDeJDpdvItmoglxRb4aOcAx7LsM7sMbyX7KbVnWJoRzW9pJhFsLkf5vtVUt3aI7Sloe9TsD1ePulifUuDWAyMPaBNY9ZC8s6vB2YFGct6V7ZCiUEG8G6G
 
-Get all post from page, lock by time
+ - Lấy tất cả bài viết trên tường của page:
 https://graph.facebook.com/fql?q=SELECT+post_id,+message,created_time+FROM+stream+WHERE+source_id+=+me()+AND+created_time+>=+1500915600+AND+created_time+<=+now()
 &access_token=EAACW5Fg5N2IBABarRKZA8voM7k7qh95G0hH0smIZCFfgspYffQy2v7rPvs7ItS5qDeJDpdvItmoglxRb4aOcAx7LsM7sMbyX7KbVnWJoRzW9pJhFsLkf5vtVUt3aI7Sloe9TsD1ePulifUuDWAyMPaBNY9ZC8s6vB2YFGct6V7ZCiUEG8G6G
 
@@ -33,6 +32,15 @@ console.log(name === undefined || name == "" || name == null ? "Link bạn đưa
 
 https://graph.facebook.com/v2.7/{name}?fields=id,name,picture
 &access_token=EAACW5Fg5N2IBABarRKZA8voM7k7qh95G0hH0smIZCFfgspYffQy2v7rPvs7ItS5qDeJDpdvItmoglxRb4aOcAx7LsM7sMbyX7KbVnWJoRzW9pJhFsLkf5vtVUt3aI7Sloe9TsD1ePulifUuDWAyMPaBNY9ZC8s6vB2YFGct6V7ZCiUEG8G6G
-
+ 
+ - Lấy tất cả fan page mà user admin
 select page_id,name,pic,page_url from page where page_id in (
 SELECT page_id FROM page_admin WHERE uid=me())
+
+https://graph.facebook.com/fql?q=select+id,name,url,pic,page+from+profile+where+id+=+675639245913325
+&access_token=EAACW5Fg5N2IBABarRKZA8voM7k7qh95G0hH0smIZCFfgspYffQy2v7rPvs7ItS5qDeJDpdvItmoglxRb4aOcAx7LsM7sMbyX7KbVnWJoRzW9pJhFsLkf5vtVUt3aI7Sloe9TsD1ePulifUuDWAyMPaBNY9ZC8s6vB2YFGct6V7ZCiUEG8G6G
+
+675639245913325
+
+ - Lấy tất cả fan page mà user like
+select+page_id,name,pic,page_url,type+from+page+where+page_id+IN+(%20SELECT+page_id,type+FROM+page_fan+WHERE+uid+=+me()+limit+60000000)
