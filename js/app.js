@@ -1135,7 +1135,8 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
         });
     }
     $scope.getUserFromUid = function (uid, element) {
-        var api_user = "https://graph.facebook.com/fql?q=SELECT+uid,name,pic+FROM+user+WHERE+uid=" + uid + "&access_token=" + $scope.access_token; //675639245913325
+        //var api_user = "https://graph.facebook.com/fql?q=select+id,name,url,pic,type+from+profile+where+id+=+" + uid + "&access_token=" + $scope.access_token; //675639245913325
+        var api_user = "https://graph.facebook.com/fql?q=select+id,name,url,pic,type+from+profile+where+id+=+" + uid + "&access_token=" + $scope.access_token; //675639245913325
         var req = {
             method: 'GET',
             url: api_user
