@@ -318,13 +318,27 @@
                                                 <div class="item-details">
                                                     <img style="width: 35px;" class="item-pic rounded" src="{{cmt.user.pic}}">
                                                     <a target="_blank" href="https://fb.com/{{cmt.user.uid}}" class="item-name primary-link">{{cmt.user.name}}</a>
-                                                    <span class="item-label">{{cmt.time}}</span>
+                                                    <span class="item-label"><a target="_blank" href='https://fb.com/{{cmt.id}}'>{{cmt.time}}</a></span>
                                                 </div>
                                                 <span class="item-status">
                                                         <span class="badge badge-empty badge-success"></span>
                                                 <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
                                             </div>
                                             <div class="item-body" style="margin-left: 50px;">{{cmt.text}}</div>
+
+                                            <!-- <div class="item" ng-repeat="reply_cmt in cmt.comment_reply" style="margin-left: 50px;margin-top: 10px;">
+                                                <div class="item-head">
+                                                    <div class="item-details">
+                                                        <img style="width: 35px;" class="item-pic rounded" src="{{cmt.user.pic}}">
+                                                        <a target="_blank" href="https://fb.com/{{reply_cmt.from.id}}" class="item-name primary-link">{{reply_cmt.from.name}}</a>
+                                                        <span class="item-label"><a target="_blank" href='https://fb.com/{{cmt.id}}'>{{reply_cmt.created_time}}</a></span>
+                                                    </div>
+                                                    <span style="float: right;" class="item-status">
+                                                        <span class="badge badge-empty badge-success"></span>
+                                                    <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
+                                                </div>
+                                                <div class="item-body" style="margin-left: 50px;">{{reply_cmt.message}}</div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -396,7 +410,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                                
+
                                         </div>
                                         <div class="col-md-12">
                                             <div class="col-md-4">

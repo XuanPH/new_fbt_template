@@ -1176,6 +1176,60 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
             console.log(res);
         });
     }
+    $scope.onScanCmt_v2 = function (obj) {
+        $scope.loadingCss = true;
+        $scope.comments = [];
+        var api_get_comment_v2 = 'https://graph.fb.me/v2.10/' + obj.post.post_id + '?fields=comments.limit(600000000){comments.limit(600000000){message,created_time,from},message,from,created_time}&access_token=' + $scope.access_token;
+        var req = {
+            method: 'GET',
+            url: api_get_comment_v2
+        }
+        $http(req).then(function success(res) {
+            if (res.data.comments === undefined) {
+                $scope.comments = [];
+            } else {
+                res.data.comments.data.forEach(function (element) {
+                    $scope.getUserFromUid_v2(element.from.id, element, $scope.comments);
+                }, this);
+            }
+            $scope.loadingCss = false;
+        }, function error(res) {
+            console.log(res);
+            $scope.loadingCss = false;
+        });
+    }
+    $scope.getUserFromUid_v2 = function (uid, element_parent) {
+        //var api_user = "https://graph.facebook.com/fql?q=select+id,name,url,pic,type+from+profile+where+id+=+" + uid + "&access_token=" + $scope.access_token; //675639245913325
+        var api_user = "https://graph.facebook.com/fql?q=select+id,name,url,pic,type+from+profile+where+id+=+" + uid + "&access_token=" + $scope.access_token; //675639245913325
+        var req = {
+            method: 'GET',
+            url: api_user
+        }
+        $http(req).then(function success(res) {
+            var obj_user = {};
+            res.data.data.forEach(function (element) {
+                obj_user.uid = element.id;
+                obj_user.name = element.name;
+                obj_user.pic = element.pic;
+            }, this);
+            var date = new Date(element_parent.created_time);
+            var comment_reply = element_parent.comments !== undefined ? element_parent.comments.data : [];
+            var obj_fanpage = {
+                id: element_parent.id,
+                text: element_parent.message,
+                time: formatDate(date),
+                time_number: date.getTime(),
+                user: obj_user,
+                comment_reply: comment_reply
+            };
+            $scope.comments.push(obj_fanpage);
+            $scope.pageCount = $scope.comments.length;
+            setDisplayItems_cmt($scope.comments);
+            //return obj_fanpage;
+        }, function error(res) {
+            console.log(res);
+        });
+    }
     $scope.filterItems_cmt = function () {
         if ($scope.filterText_cmt == '') {
             var data = $filter('filter')($scope.comments, $scope.filterText_cmt, false, 'text');
