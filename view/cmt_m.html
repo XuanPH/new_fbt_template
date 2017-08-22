@@ -325,9 +325,9 @@
                                                 <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
                                             </div>
                                             <div class="item-body" style="margin-left: 50px;">{{cmt.text}}
-                                                <p id="cmt_{{cmt.id}}" ng-show="cmt.isReply" style="cursor: pointer">
+                                                <p ng-click="loadReply(this)" id="cmt_{{cmt.id}}" ng-show="cmt.isReply" style="cursor: pointer">
                                                     <br>
-                                                    <small><i class="fa fa-reply"></i> {{cmt.countReply}} câu trả lời</p>
+                                                    <small class="itemReply"><i class="fa fa-reply"></i> {{cmt.countReply}} câu trả lời</p>
                                                 </p>
                                             </div>
 
