@@ -324,7 +324,12 @@
                                                         <span class="badge badge-empty badge-success"></span>
                                                 <a target="_blank" href='https://fb.com/{{cmt.id}}'>Xem</a></span>
                                             </div>
-                                            <div class="item-body" style="margin-left: 50px;">{{cmt.text}}</div>
+                                            <div class="item-body" style="margin-left: 50px;">{{cmt.text}}
+                                                <p id="cmt_{{cmt.id}}" ng-show="cmt.isReply" style="cursor: pointer">
+                                                    <br>
+                                                    <small><i class="fa fa-reply"></i> {{cmt.countReply}} câu trả lời</p>
+                                                </p>
+                                            </div>
 
                                             <!-- <div class="item" ng-repeat="reply_cmt in cmt.comment_reply" style="margin-left: 50px;margin-top: 10px;">
                                                 <div class="item-head">
@@ -392,31 +397,36 @@
                                     </div>
                                     <div class="tab-pane" id="tab_15_2">
                                         <div class="col-md-12">
-                                            <div class="form-inline">
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-md-line-input has-error">
-                                                        <input type="text" class="form-control" placeholder="Bắt đầu">
-                                                        <div class="form-control-focus"> </div>
-                                                        <span class="help-block">Nhập số bắt đầu</span>
-                                                    </div>
+                                                <div class="form-group form-md-line-input has-error">
+                                                    <input ng-model="endNum" value="999" type="number" min="1" max="7" class="form-control" placeholder="Nhập số chữ số">
+                                                    <div class="form-control-focus"> </div>
+                                                    <span class="help-block">Nhập số chữ số</span>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-md-line-input has-error">
-                                                        <input type="text" class="form-control" placeholder="Kết thúc">
-                                                        <div class="form-control-focus"> </div>
-                                                        <span class="help-block">Nhập số kết thúc</span>
-                                                    </div>
-                                                </div>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <div class="col-md-12">
+                                            <div id="btn-number" class="btn-group btn-group-solid" style="margin-left: 35%;">
+                                                <button id="number_{{i}}" type="button" class="btn red" ng-repeat="i in lstNum">
+                                                    0
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-
-                                        </div>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
                                         <div class="col-md-12">
                                             <div class="col-md-4">
                                             </div>
                                             <div class="col-md-4">
-                                                <button type="button" ng-click="random()" class="btn btn-circle default blue-stripe">Random</button>
+                                                <button type="button" ng-click="random()" class="btn btn-circle default blue-stripe" style="margin-left: 20%;">Random</button>
                                             </div>
                                             <div class="col-md-4">
                                             </div>
