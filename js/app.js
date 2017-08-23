@@ -651,7 +651,7 @@ myApp.controller('musicController', ['$scope', '$sce', '$http', function ($scope
     };
 }]);
 myApp.controller('authController', ['$scope', '$location', function ($scope, $location) {
-    console.log('authController joined');
+    //console.log('authController joined');
     $scope.logedUser = 'chưa đăng nhập';
     $scope.isLoged = false;
     $scope.level = 'member';
@@ -1070,7 +1070,7 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
         $scope.post = [];
         var api_get_wall = 'https://graph.facebook.com/fql?q=SELECT+post_id,+message,created_time+FROM+stream+WHERE+source_id+=+' + obj.friend.uid + '+AND+created_time+>=+1064957200+AND+created_time+<=+now()+limit+60000000&access_token=' + $scope.access_token
         $scope.id_choose = obj.friend.uid;
-        console.log(api_get_wall);
+        //console.log(api_get_wall);
         var req = {
             method: 'GET',
             url: api_get_wall
@@ -1170,14 +1170,62 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
         $scope.loadingCss = true;
         $scope.comments = [];
         var api_get_comment = "https://graph.facebook.com/fql?q=SELECT+id,+text,+time,+fromid,is_private,reply_xid,object_id,post_id,xid+FROM+comment+WHERE+post_id=%22" + obj.post.post_id + "%22+limit+60000000&access_token=" + $scope.access_token;
+        //var api_get_comment  = 'https://graph.fb.me/v2.10/'+obj.post.post_id+'?fields=comments{id}&access_token=' + $scope.access_token;
+        var api_get_comment_v2 = 'https://graph.fb.me/v2.10/' + obj.post.post_id + '?fields=comments.limit(1000000){message,from,created_time,comments.summary(true).limit(1000000)}&access_token=' + $scope.access_token;
         var req = {
             method: 'GET',
-            url: api_get_comment
+            url: api_get_comment_v2
         }
         $http(req).then(function success(res) {
-            res.data.data.forEach(function (element) {
-                $scope.getUserFromUid(element.fromid, element, $scope.comments);
+            var data = res.data.comments.data;
+            data.forEach(function (element) {
+                $scope.getUserFromUid(element.from.id, element, $scope.comments);
+                //$scope.getUserFromUid(element.fromid, element, $scope.comments);
+                //$scope.convert_Cmt(element.id);
             }, this);
+            $scope.loadingCss = false;
+        }, function error(res) {
+            console.log(res);
+            $scope.loadingCss = false;
+        });
+    }
+    $scope.loadReply = function (obj) {
+        $scope.loadingCss = true;
+        console.log(obj);
+        var id = obj.cmt.id;
+        var api_get_reply = 'http://localhost/ssv2/fb_api.php?comment_id=' + id + '&token=' + $scope.access_token;
+        var req = {
+            method: 'GET',
+            url: api_get_reply
+        }
+        $http(req).then(function success(res) {
+            var data = res.data;
+            var lst_rep = [];
+            var template = '<div class="general-item-list" style = "margin-top: 15px;">';
+            var content_template = "";
+            data.reply.forEach(function (element) {
+                var time = new Date(element.created_time);
+                content_template +=
+                    '<div class="item">'
+                    + '<div class="item-head">'
+                    + '<div class="item-details">'
+                    + '<img style="width: 35px;" class="item-pic rounded" src="' + element.from.pic + '">'
+                    + '<a target="_blank" href="' + element.from.url + '" class="item-name primary-link">' + element.from.name + '</a>'
+                    + '<span class="item-label"><a target="_blank" href="https://fb.com/' + element.id + '">'
+                    + formatDate(time)
+                    + '</a></span>'
+                    + ' </div>'
+                    + '<span class="item-status">'
+                    + '<span class="badge badge-empty badge-success"></span>'
+                    + '<a target="_blank" href="https://fb.com/' + element.id + '">Xem</a></span>'
+                    + '</div>'
+                    + '<div class="item-body" style="margin-left: 50px;">' + element.message
+                    + '</div>'
+                    + " </div>";
+            }, this);
+            template = template + content_template + "</div>";
+            $("#cmt_" + obj.cmt.id).after(template);
+            $("#cmt_" + obj.cmt.id).remove();
             $scope.loadingCss = false;
         }, function error(res) {
             console.log(res);
@@ -1198,12 +1246,22 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
                 obj_user.name = element.name;
                 obj_user.pic = element.pic;
             }, this);
-            var date = new Date(element_parent.time * 1000);
+            //var date = new Date(element_parent.time * 1000);
+            var date = new Date(element_parent.created_time);
+            // var obj_fanpage = {
+            //     id: element_parent.id,
+            //     text: element_parent.text,
+            //     time: formatDate(date),
+            //     time_number: element_parent.time * 10000,
+            //     user: obj_user
+            // };
             var obj_fanpage = {
                 id: element_parent.id,
-                text: element_parent.text,
+                text: element_parent.message,
                 time: formatDate(date),
-                time_number: element_parent.time * 10000,
+                isReply: element_parent.comments.summary.total_count > 0 ? true : false,
+                countReply: element_parent.comments.summary.total_count,
+                time_number: 0,
                 user: obj_user
             };
             $scope.comments.push(obj_fanpage);
@@ -1217,23 +1275,28 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
     $scope.onScanCmt_v2 = function (obj) {
         $scope.loadingCss = true;
         $scope.comments = [];
-        var api_get_comment_v2 = 'https://graph.fb.me/v2.10/' + obj.post.post_id + '?fields=comments.limit(600000000){comments.limit(600000000){message,created_time,from},message,from,created_time}&access_token=' + $scope.access_token;
+        var api_get_comment_v2 = 'http://localhost/ssv2/fb_api.php?post_id=' + obj.post.post_id + '&token=' + $scope.access_token;
         var req = {
             method: 'GET',
             url: api_get_comment_v2
         }
         $http(req).then(function success(res) {
-            if (res.data.comments === undefined) {
-                $scope.comments = [];
-            } else {
-                res.data.comments.data.forEach(function (element) {
-                    $scope.getUserFromUid_v2(element.from.id, element, $scope.comments);
-                }, this);
-            }
+            console.log(res.data);
             $scope.loadingCss = false;
         }, function error(res) {
             console.log(res);
             $scope.loadingCss = false;
+        });
+    }
+    $scope.convert_Cmt = function (comment_id) {
+        var api_get_comment_v2 = 'http://localhost/ssv2/fb_api.php?comment_id=' + comment_id + '&token=' + $scope.access_token;
+        var req = {
+            method: 'GET',
+            url: api_get_comment_v2
+        }
+        $http(req).then(function success(res) {
+            var data = res.data;
+        }, function error(res) {
         });
     }
     $scope.getUserFromUid_v2 = function (uid, element_parent) {
@@ -1311,11 +1374,47 @@ myApp.controller('cmtController', ['$scope', '$filter', '$http', function ($scop
         $scope.pageCountNum_cmt = CalcPageCount($scope.itemsDisplay_cmt, data.length);
         $scope.pageCountNum_cmt = Setting($scope.pageCountNum_cmt, $scope.page_cmt);
     }
+    $scope.random = function () {
+        $scope.lstNum = [];
+        for (var i = 1; i <= $scope.endNum; i++) {
+            $scope.lstNum.push(i);
+        }
+        generateNumber(0);
+    }
 }]);
+var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+function generateNumber(index) {
+    if (index > $("#btn-number > .btn").length) {
+        clearInterval(animationTimer);
+        return;
+    }
+    resize();
+    var max = 9, min = 0;
+    var item_ran = Math.floor(Math.random() * (max - min + 1)) + min;
+    var desired = numbers[item_ran];
+    var duration = 1000;
+    var output = $('#number_' + index); // Start ID with letter
+    var started = new Date().getTime();
+    animationTimer = setInterval(function () {
+        if (output.text().trim() === desired || new Date().getTime() - started > duration) {
+            clearInterval(animationTimer); // Stop the loop
+            output.text(desired); // Print desired number in case it stopped at a different one due to duration expiration
+            generateNumber(index + 1);
+        } else {
+            output.text(Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+    }, 100);
+}
 function removeByValue(array, value) {
     return array.filter(function (elem, _index) {
         return value != elem.id ? true : false;
     });
+}
+function resize(callback) {
+    setTimeout(function () {
+        var size = ($("#btn-number").parent().width() - $("#btn-number").width());
+        $("#btn-number").css("margin-left", size / 2);
+    }, 300);
 }
 function dynamicSortMultiple() {
     /*
