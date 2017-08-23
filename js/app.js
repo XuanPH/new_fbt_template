@@ -298,13 +298,13 @@ myApp.controller('musicController', ['$scope', '$sce', '$http', function ($scope
     $scope.findsuccess = false;
     $scope.localStorageSongs = [];
     var key = 'xuandeptraikhoaito';
-    var dev = 'http://ss.net:88/';
+    var dev = 'http://ss.net:88/api/';
     var pro = 'http://xuanphuong.xyz/api/';
-    var url_api = pro + 'bv2.php?url={url}&keyapi=' + key + '&type={type}';
-    var url_api_nct = pro + 'nct_getlink.php?url={url}&a=' + key
-    var url_api_search = pro + 'searchzing.php?q={key}&a=' + key;
-    var url_api_search_nct = pro + 'searchnct.php?q={key}&a=' + key;
-    var url_api_search_u2b = pro + 'searchu2be.php?q={key}&a=' + key;
+    var url_api = dev + 'bv2.php?url={url}&keyapi=' + key + '&type={type}';
+    var url_api_nct = dev + 'nct_getlink.php?url={url}&a=' + key
+    var url_api_search = dev + 'searchzing.php?q={key}&a=' + key;
+    var url_api_search_nct = dev + 'searchnct.php?q={key}&a=' + key;
+    var url_api_search_u2b = dev + 'searchu2be.php?q={key}&a=' + key;
     $scope.loadLocalstorage = function () {
         if (localStorage.getItem('songs') !== undefined) {
             $scope.localStorageSongs = JSON.parse(localStorage.getItem('songs'));
@@ -449,6 +449,44 @@ myApp.controller('musicController', ['$scope', '$sce', '$http', function ($scope
         }, function error(res) {
             //console.log('Lỗi');
             console.log(res);
+        });
+    }
+    $scope.convert_zingv2 = function () {
+        $scope.isLoading = true;
+        var req = {
+            method: 'GET',
+            url: 'http://ss.net:88/api/bv2_api.php?url=' + $scope.urlzing
+        }
+        $http(req).then(function success(res) {
+            var element = res.data;
+            var obj = {
+                id: element.title,
+                title: element.title,
+                error: "",
+                msg: "",
+                artist: element.artist,
+                url: element.link128,
+                url320: element.link320,
+                urllossless: element.lossless,
+                server: 'zing'
+            };
+            $scope.songs.push(obj);
+            $scope.isLoading = false;
+        }, function errror(res) {
+            console.log(res);
+        }).catch(function (e) {
+            {
+                $scope.isLoading = false;
+                //alert('LỖI!!!! - Link bạn đưa không đúng\nChi tiết: ' + e.message);
+                $.notify("LỖI!!!! - Link bạn đưa không đúng\nChi tiết: " + e.message, {
+                    animate: {
+                        enter: 'animated bounceInDown',
+                        exit: 'animated bounceOutUp'
+                    },
+                    type: 'danger'
+                });
+                throw e;
+            }
         });
     }
     $scope.convert_nct = function () {
@@ -599,7 +637,7 @@ myApp.controller('musicController', ['$scope', '$sce', '$http', function ($scope
     $scope.addSong = function (e) {
         $scope.urlzing = e.item.url;
         if ($scope.server == 'zing') {
-            $scope.convert();
+            $scope.convert_zingv2();
         } else if ($scope.server == 'nct') {
             $scope.convert_nct();
         } else {

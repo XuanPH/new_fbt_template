@@ -243,9 +243,9 @@
                                                 <ul class="dropdown-menu">
                                                     <li><a ng-show="song.server == 'nct' || song.server == 'zing' ? true : false"
                                                             style="cursor: pointer" download="{{song.id}}" href="{{song.url}}"><small><i class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i> Tải 128kb</small></a></li>
-                                                    <li><a href="#"> <a ng-show="song.server == 'nct' ? true : false" style="cursor: pointer" download="{{song.id}}" href="{{song.url320}}"><small><i class="fa fa-download faa-shake animated-hover"  aria-hidden="true"></i> Tải 320kb</small></a></a>
+                                                    <li><a href="#"> <a ng-show="song.server == 'nct' ||  song.server == 'zing' ? true : false" style="cursor: pointer" download="{{song.id}}" href="{{song.url320}}"><small><i class="fa fa-download faa-shake animated-hover"  aria-hidden="true"></i> Tải 320kb</small></a></a>
                                                     </li>
-                                                    <li><a href="#"> <a ng-show="song.server == 'nct' ? true : false" style="cursor: pointer" download="{{song.id}}" href="{{song.urllossless}}"><small><i class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i>  Tải lossless</small></a></a>
+                                                    <li><a href="#"> <a ng-show="song.server == 'nct' ||  song.server == 'zing'  ? true : false" style="cursor: pointer" download="{{song.id}}" href="{{song.urllossless}}"><small><i class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i>  Tải lossless</small></a></a>
                                                     </li>
                                                     <li><a href="#"> <a ng-show="song.server == 'local' ? true : false" style="cursor: pointer" download="{{song.id}}" href="{{song.url}}"><small><i class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i>  Tải full sound</small></a></a>
                                                     </li>
