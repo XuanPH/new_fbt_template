@@ -88,7 +88,7 @@ myApp.controller('fbController', ['$scope', '$filter', '$http', '$sce', function
                 var postId_template = "";
                 var currend_id = element.id;
                 $scope.friends_reaction.forEach(function (element2) {
-                    if (currend_id == element2.id) {
+                    if (curremnd_id == element2.id) {
                         postsId.push({ id: element2.id_post, type: element2.type });
                         switch (element2.type) {
                             case 'LIKE': like++; break;
