@@ -1387,7 +1387,7 @@ myApp.controller('postPageController', ['$scope', '$filter', '$http','$routePara
 
    $scope.loadingCss = true;
         $scope.post = [];
-        var api_get_wall = 'https://graph.facebook.com/fql?q=SELECT+post_id,+message,created_time+FROM+stream+WHERE+source_id+=+' + $scope.id_choose + '+AND+created_time+>=+1064957200+AND+created_time+<=+now()+limit+60000000&access_token=' + $scope.access_token
+        var api_get_wall = 'https://graph.facebook.com/fql?q=SELECT+post_id,+message,created_time,attachment+FROM+stream+WHERE+source_id+=+' + $scope.id_choose + '+AND+created_time+>=+1064957200+AND+created_time+<=+now()+limit+60000000&access_token=' + $scope.access_token
         var req = {
             method: 'GET',
             url: api_get_wall
@@ -1398,7 +1398,10 @@ myApp.controller('postPageController', ['$scope', '$filter', '$http','$routePara
                 var obj = {
                     post_id: element.post_id,
                     message: element.message,
-                    created_time: formatDate(date)
+                    created_time: formatDate(date),
+                    type_post : element.attachment.fb_object_type,
+                    description: getDes(element.attachment.fb_object_type),
+                    href : element.attachment.media
                 }
                 $scope.post.push(obj);
             }, this);
@@ -1411,7 +1414,18 @@ myApp.controller('postPageController', ['$scope', '$filter', '$http','$routePara
             console.log(res.data.data);
             $scope.loadingCss = false;
         });
-
+    function getDes(fb_object_type){
+        switch(fb_object_type){
+            case 'album' : return 'đã đăng một album'; break;
+            case 'photo' : return 'đã đăng ảnh'; break;
+            case 'video' : return 'đã đăng một video'; break;
+            case 'text' : return 'đã đăng một trạng thái'; break;
+            case 'link' : return 'chia sẻ 1 liên kết'; break;
+            case undefined : return 'đăng 1 trạng thái'; break;
+            case null : return 'đăng 1 trạng thái'; break;
+            defaults : return ''; break;
+        }
+    }
     function setDisplayItems(data) {
         $scope.displayItems = data;
         $scope.pageCount = data.length;
